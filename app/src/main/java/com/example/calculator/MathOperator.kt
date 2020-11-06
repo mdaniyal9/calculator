@@ -4,5 +4,6 @@ enum class MathOperator {
     DIVIDE,
     MULTIPLY,
     MINUS,
-    PLUS
+    PLUS,
+    MOD
 }

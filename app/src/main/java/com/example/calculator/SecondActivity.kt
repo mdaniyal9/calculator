@@ -41,13 +41,15 @@ class SecondActivity : AppCompatActivity(), View.OnClickListener {
         btn_minus.setOnClickListener(this)
         btn_plus.setOnClickListener(this)
         btn_clear.setOnClickListener(this)
+        btn_bracket.setOnClickListener(this)
+        btn_dot.setOnClickListener(this)
+        btn_back.setOnClickListener(this)
+        btn_mod.setOnClickListener(this)
 
-        text_edit.doAfterTextChanged {
-            if(text_edit.text.startsWith("0"))
-                text_edit.text.clear()
-
-            
-        }
+//        text_edit.doAfterTextChanged {
+//            if(text_edit.text.startsWith("0"))
+//                text_edit.text.clear()
+//        }
 
     }
 
@@ -84,30 +86,19 @@ class SecondActivity : AppCompatActivity(), View.OnClickListener {
                 text_edit.text.append("9")
             }
             R.id.btn_equal -> {
-//                if(text_edit.text.endsWith("/") || text_edit.text.endsWith("*") || text_edit.text.endsWith("-") ||text_edit.text.endsWith("+"))
-//                {
-//                    Toast.makeText(this,"Please enter another number or remove operator from end", Toast.LENGTH_LONG).show()
-//                    return
-//                }
-//                val regex = ("^[\\d\\+\\/\\*\\.\\- \\(\\)]*$").toRegex()
-                val regex = ("^(\\d+[\\+\\-\\*\\/]{1})+\\d+\$").toRegex()
+
+//                val regex = ("^(\\d+[\\+\\-\\*\\/]{1})+\\d+\$").toRegex()
+                val regex = ("^([+-]?(\\d*\\.)?\\d+[\\+\\-\\*\\/\\%]{1})+[+-]?(\\d*\\.)?\\d+\$").toRegex()
                 val myString = text_edit.text.toString()
 //                if (!text_edit.text.toString().equals("")) {
                 if(myString.matches(regex)){
-//                    val regex = "^(\d+[\+\-\*\/]{1})+\d+$"
-
-//                    val strs = text_edit.text.toString().split("(?<=[-+*/])|(?=[-+*/])").toTypedArray()
-
-
-
-
 
                     val operatorList: MutableList<String> = ArrayList()
                     val operandList: MutableList<String> = ArrayList()
-                    val st = StringTokenizer(myString, "+-*/", true)
+                    val st = StringTokenizer(myString, "+-*/%", true)
                     while (st.hasMoreTokens()) {
                         val token = st.nextToken()
-                        if ("+-/*".contains(token)) {
+                        if ("+-/*%".contains(token)) {
                             operatorList.add(token)
                         } else {
                             operandList.add(token)
@@ -159,6 +150,29 @@ class SecondActivity : AppCompatActivity(), View.OnClickListener {
                 numTwo = 0.0F
                 currentOperator = null
             }
+            R.id.btn_bracket -> {
+                //apply a regex here for brackets
+                //text_edit.text.append("()")
+            }
+            R.id.btn_dot -> {
+                text_edit.text.append(".")
+            }
+            R.id.btn_back -> {
+                if(!text_edit.text.toString().equals("")) {
+                    val newText = text_edit.text.substring(0, text_edit.text.toString().length - 1)
+                    text_edit.text.clear()
+                    text_edit.text.append(newText)
+                }
+                else
+                {
+                    Toast.makeText(this,"Already empty", Toast.LENGTH_LONG).show()
+                }
+
+            }
+            R.id.btn_mod -> {
+                text_edit.text.append("%")
+                doMathOperation(MathOperator.MOD)
+            }
         }
     }
 
@@ -182,6 +196,9 @@ class SecondActivity : AppCompatActivity(), View.OnClickListener {
             }
             "+" -> {
                 return (numberOne+numberTwo)
+            }
+            "%" -> {
+                return (numberOne%numberTwo)
             }
 
             else -> return 0.0F
